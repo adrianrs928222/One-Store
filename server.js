@@ -19,7 +19,7 @@ const app = express();
 
 // Configuración CORS
 const allowedOrigins = [
-  'https://adrianrs928222.github.io',
+  'https://one-store-95m5.onrender.com',
   'http://localhost:3000'
 ];
 
