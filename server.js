@@ -12,29 +12,33 @@ const __dirname = path.dirname(__filename);
 // Cargar variables de entorno
 dotenv.config();
 
-// Inicializar Stripe con la clave secreta
+// Inicializar Stripe
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 const app = express();
 
-// Configuración segura de CORS
+// ✅ CORS configurado para GitHub Pages y local
 const allowedOrigins = [
-  'https://one-store-95m5.onrender.com',  // Cambia esto por el dominio real
-  'http://localhost:3000'            // Para desarrollo local
+  'https://adrianrs928222.github.io',
+  'http://localhost:3000'
 ];
 
 app.use(cors({
-  origin: allowedOrigins,
-  methods: ['GET', 'POST'],
-  credentials: true
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Origen no permitido por CORS'));
+    }
+  }
 }));
 
 app.use(express.json());
 
-// Servir archivos estáticos si los tienes
+// (Opcional) Servir archivos estáticos
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Endpoint de Stripe
+// ✅ Endpoint para crear sesión de pago
 app.post('/create-checkout-session', async (req, res) => {
   try {
     const session = await stripe.checkout.sessions.create({
@@ -46,12 +50,12 @@ app.post('/create-checkout-session', async (req, res) => {
           product_data: {
             name: item.name
           },
-          unit_amount: item.price,
+          unit_amount: item.price, // Precio en céntimos
         },
         quantity: 1
       })),
-      success_url: 'https://one-store-95m5.onrender.com/success.html',
-      cancel_url: 'https://one-store-95m5.onrender.com/cancel.html',
+      success_url: 'https://adrianrs928222.github.io/success.html',
+      cancel_url: 'https://adrianrs928222.github.io/cancel.html',
     });
 
     res.json({ url: session.url });
