@@ -17,9 +17,9 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 const app = express();
 
-// Configuración CORS
+// Configurar CORS para permitir frontend GitHub Pages y localhost
 const allowedOrigins = [
-  'https://one-store-95m5.onrender.com',
+  'https://adrianrs928222.github.io',
   'http://localhost:3000'
 ];
 
@@ -33,13 +33,12 @@ app.use(cors({
   }
 }));
 
-// Middleware para parsear JSON
 app.use(express.json());
 
 // (Opcional) servir archivos estáticos si usas carpeta public
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Endpoint para crear sesión de Stripe Checkout
+// Endpoint para crear sesión Stripe Checkout
 app.post('/create-checkout-session', async (req, res) => {
   try {
     const session = await stripe.checkout.sessions.create({
@@ -49,9 +48,9 @@ app.post('/create-checkout-session', async (req, res) => {
         price_data: {
           currency: 'eur',
           product_data: { name: item.name },
-          unit_amount: item.price, // Precio en céntimos
+          unit_amount: item.price, // en céntimos
         },
-        quantity: 1,
+        quantity: 1
       })),
       success_url: 'https://adrianrs928222.github.io/success.html',
       cancel_url: 'https://adrianrs928222.github.io/cancel.html',
@@ -59,7 +58,7 @@ app.post('/create-checkout-session', async (req, res) => {
 
     res.json({ url: session.url });
   } catch (error) {
-    console.error('❌ Error al crear la sesión:', error.message);
+    console.error('Error al crear la sesión:', error.message);
     res.status(500).json({ error: 'Error al crear la sesión de Stripe' });
   }
 });
@@ -67,5 +66,5 @@ app.post('/create-checkout-session', async (req, res) => {
 // Iniciar servidor
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`✅ Servidor corriendo en http://localhost:${PORT}`);
+  console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
