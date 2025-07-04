@@ -16,10 +16,22 @@ dotenv.config();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 const app = express();
-app.use(cors());
+
+// Configuración segura de CORS
+const allowedOrigins = [
+  'https://one-store-95m5.onrender.com',  // Cambia esto por el dominio real
+  'http://localhost:3000'            // Para desarrollo local
+];
+
+app.use(cors({
+  origin: allowedOrigins,
+  methods: ['GET', 'POST'],
+  credentials: true
+}));
+
 app.use(express.json());
 
-// Servir archivos estáticos del frontend (opcional si usas Vercel para frontend)
+// Servir archivos estáticos si los tienes
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Endpoint de Stripe
@@ -34,12 +46,12 @@ app.post('/create-checkout-session', async (req, res) => {
           product_data: {
             name: item.name
           },
-          unit_amount: item.price, // en céntimos: 1499 = 14.99 €
+          unit_amount: item.price,
         },
         quantity: 1
       })),
-      success_url: 'https://TU-FRONTEND.vercel.app/success.html',
-      cancel_url: 'https://TU-FRONTEND.vercel.app/cancel.html',
+      success_url: 'https://one-store-95m5.onrender.com/success.html',
+      cancel_url: 'https://one-store-95m5.onrender.com/cancel.html',
     });
 
     res.json({ url: session.url });
