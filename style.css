@@ -1,0 +1,80 @@
+body {
+  font-family: 'Segoe UI', sans-serif;
+  text-align: center;
+  background: #f0f4f8;
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+header {
+  background: #0d0d0d;
+  color: white;
+  padding: 2rem 0 1rem;
+}
+header h1 {
+  margin-bottom: 0.3rem;
+  font-size: 2.5rem;
+}
+.tagline {
+  font-size: 1.2rem;
+  font-style: italic;
+  color: #ddd;
+}
+.product {
+  background: white;
+  max-width: 500px;
+  margin: 2rem auto;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+}
+.product img {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+.benefits {
+  text-align: left;
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+}
+.benefits li {
+  margin: 0.5rem 0;
+  font-size: 1rem;
+}
+.price {
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin: 1.2rem 0;
+  color: #e60023;
+}
+.trust, .urgency {
+  font-size: 0.9rem;
+  color: #555;
+  margin-top: 1rem;
+}
+.urgency {
+  color: #d9534f;
+  font-weight: bold;
+}
+button {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 0.8rem 1.6rem;
+  font-size: 1.1rem;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.3s ease;
+}
+button:hover {
+  background: #218838;
+}
+footer {
+  background: #eee;
+  padding: 1rem 0;
+  font-size: 0.9rem;
+  color: #555;
+  margin-top: 2rem;
+}

@@ -1,0 +1,16 @@
+# Archivos confidenciales
+*.env
+
+# Node modules
+node_modules/
+
+# Logs
+*.log
+
+# Configuración de IDE
+.vscode/
+.idea/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
