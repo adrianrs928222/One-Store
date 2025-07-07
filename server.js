@@ -1,70 +1,42 @@
 import express from 'express';
-import cors from 'cors';
 import Stripe from 'stripe';
+import cors from 'cors';
 import dotenv from 'dotenv';
-import path from 'path';
-import { fileURLToPath } from 'url';
 
-// Configurar __dirname en ES Modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Cargar variables de entorno
 dotenv.config();
 
-// Inicializar Stripe con tu clave secreta
+const app = express();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-const app = express();
-
-// Configurar CORS para permitir frontend GitHub Pages y localhost
-const allowedOrigins = [
-  'https://adrianrs928222.github.io',
-  'http://localhost:3000'
-];
-
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Origen no permitido por CORS'));
-    }
-  }
-}));
-
+app.use(cors()); // o configura `origin` si tienes frontend en dominio aparte
 app.use(express.json());
 
-// (Opcional) servir archivos estáticos si usas carpeta public
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Endpoint para crear sesión Stripe Checkout
 app.post('/create-checkout-session', async (req, res) => {
   try {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
-      mode: 'payment',
-      line_items: req.body.items.map(item => ({
+      line_items: [{
         price_data: {
           currency: 'eur',
-          product_data: { name: item.name },
-          unit_amount: item.price, // en céntimos
+          product_data: {
+            name: 'Mini Soldador USB',
+            images: ['https://m.media-amazon.com/images/I/61Vbog5+DKL._AC_SL1001_.jpg'],
+          },
+          unit_amount: 2499 * 100, // en céntimos (2499 = 24,99 €)
         },
-        quantity: 1
-      })),
-      success_url: 'https://adrianrs928222.github.io/success.html',
-      cancel_url: 'https://adrianrs928222.github.io/cancel.html',
+        quantity: 1,
+      }],
+      mode: 'payment',
+      success_url: 'https://tu-dominio.com/success',
+      cancel_url: 'https://tu-dominio.com/cancel',
     });
 
     res.json({ url: session.url });
-  } catch (error) {
-    console.error('Error al crear la sesión:', error.message);
-    res.status(500).json({ error: 'Error al crear la sesión de Stripe' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Algo salió mal' });
   }
 });
 
-// Iniciar servidor
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
-});
+const PORT = process.env.PORT || 4242;
+app.listen(PORT, () => console.log(`Servidor en puerto ${PORT}`));
