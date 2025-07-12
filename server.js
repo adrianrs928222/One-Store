@@ -2,15 +2,25 @@ import express from 'express';
 import Stripe from 'stripe';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 dotenv.config();
 
 const app = express();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-app.use(cors()); // o configura `origin` si tienes frontend en dominio aparte
-app.use(express.json());
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
+// Middleware
+app.use(cors({
+  origin: 'https://one-store-95m5.onrender.com', // Tu frontend
+}));
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public'))); // Servir HTML y CSS
+
+// Stripe Checkout
 app.post('/create-checkout-session', async (req, res) => {
   try {
     const session = await stripe.checkout.sessions.create({
@@ -22,13 +32,13 @@ app.post('/create-checkout-session', async (req, res) => {
             name: 'Mini Soldador USB',
             images: ['https://m.media-amazon.com/images/I/61Vbog5+DKL._AC_SL1001_.jpg'],
           },
-          unit_amount: 2499 * 100, // en céntimos (2499 = 24,99 €)
+          unit_amount: 2499, // 24,99 €
         },
         quantity: 1,
       }],
       mode: 'payment',
-      success_url: 'https://tu-dominio.com/success',
-      cancel_url: 'https://tu-dominio.com/cancel',
+      success_url: 'https://one-store-95m5.onrender.com/success.html',
+      cancel_url: 'https://one-store-95m5.onrender.com/cancel.html',
     });
 
     res.json({ url: session.url });
@@ -39,4 +49,4 @@ app.post('/create-checkout-session', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 4242;
-app.listen(PORT, () => console.log(`Servidor en puerto ${PORT}`));
+app.listen(PORT, () => console.log(`Servidor corriendo en puerto ${PORT}`));
